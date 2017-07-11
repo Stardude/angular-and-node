@@ -1,0 +1,9 @@
+<h1>Home Page</h1>
+<div ng-show="user">
+  Current User: {{user.profile.username}}
+</div>
+<div ng-show="!user">
+  <a href="/auth/facebook">
+    Log in
+  </a>
+</div>

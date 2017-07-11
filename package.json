@@ -1,0 +1,40 @@
+{
+  "name": "angular-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "karma": "karma start karma.local.conf.js",
+    "check-credentials": "mocha part1.js",
+    "test": "mocha test.js",
+    "watch": "gulp watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "1.12.4",
+    "express": "4.12.3",
+    "express-session": "1.11.2",
+    "http-status": "0.1.8",
+    "lodash": "^4.17.4",
+    "mongoose": "4.0.3",
+    "passport": "0.2.2",
+    "passport-facebook": "2.0.0",
+    "stripe": "3.3.4",
+    "superagent": "1.2.0",
+    "underscore": "^1.5.2",
+    "wagner-core": "0.1.0"
+  },
+  "devDependencies": {
+    "browserify": "^14.4.0",
+    "chai": "^4.0.2",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "karma": "^1.7.0",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-mocha": "^1.3.0",
+    "mocha": "^3.4.2",
+    "gulp-mocha": "2.0.1"
+  }
+}
