@@ -1,4 +1,4 @@
-<div class="category-tree-wrapper" ng-show="category">
+<div class="category-tree-wrapper" ng-show="category || children">
   <div class="crumbs">
     <div class="crumb" ng-repeat="ancestor in category.ancestors">
       <a ng-href="#/category/{{ancestor}}">

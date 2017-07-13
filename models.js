@@ -8,14 +8,14 @@ module.exports = function(wagner) {
     return mongoose;
   });
 
-  var Category =
-    mongoose.model('Category', require('./category'), 'categories');
-  var User =
-    mongoose.model('User', require('./user'), 'users');
+  var Category = mongoose.model('Category', require('./category'), 'categories');
+  var User = mongoose.model('User', require('./user'), 'users');
+  var Product = mongoose.model('Product', require('./product'), 'products');
 
   var models = {
     Category: Category,
-    User: User
+    User: User,
+      Product: Product
   };
 
   // To ensure DRY-ness, register factories in a loop
@@ -24,8 +24,6 @@ module.exports = function(wagner) {
       return value;
     });
   });
-
-  wagner.factory('Product', require('./product'));
 
   return models;
 };

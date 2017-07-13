@@ -11,6 +11,7 @@ module.exports.$user = function($http) {
             })
             .error(function (data, $status) {
                 if($status === status.UNAUTHORIZED) {
+                    console.log('unauthorized');
                     s.user = null;
                 }
             });

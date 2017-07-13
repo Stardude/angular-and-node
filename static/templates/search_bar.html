@@ -1,0 +1,8 @@
+<!--
+TODO: this HTML should expose a search bar
+!-->
+
+<div class="search-bar-wrapper">
+    <input class="search-bar-input" ng-model="searchText" ng-change="update()" />
+    <div class="autocomplete-result" ng-repeat="product in results">{{product.name}}</div>
+</div>

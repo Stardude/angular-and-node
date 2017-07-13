@@ -6,5 +6,5 @@ gulp.task('browserify', function() {
 });
 
 gulp.task('watch', ['browserify'], function() {
-    gulp.watch(['./*.js'], ['browserify']);
+    gulp.watch(['./static/*.js'], ['browserify']);
 });

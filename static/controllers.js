@@ -21,47 +21,66 @@ module.exports.ProductDetailsController = function ($scope, $routeParams, $http)
 };
 
 module.exports.CategoryTreeController = function ($scope, $routeParams, $http) {
-    var encoded = encodeURIComponent($routeParams.category);
+    if($scope.user.user) {
+        var encoded;
+        if ($routeParams.category !== undefined) {
+            encoded = encodeURIComponent($routeParams.category);
 
-    $http
-        .get('/api/v1/category/id/' + encoded)
-        .success(function(data){
-            $scope.category = data.category;
-            $http.get('/api/v1/category/parent/' + encoded)
-                .success(function(data){
-                    $scope.children = data.categories;
+            $http
+                .get('/api/v1/category/id/' + encoded)
+                .success(function (data) {
+                    $scope.category = data.category;
+                    $http.get('/api/v1/category/parent/' + encoded)
+                        .success(function (data) {
+                            $scope.children = data.categories;
+                        });
                 });
-        });
+        }
+        else {
+            $http.get('/api/v1/category/all').success(function (data) {
+                $scope.children = data.categories;
+            });
+        }
+    }
 
     setTimeout(function(){
         $scope.$emit('CategoryTreeController');
     }, 0);
 };
 
-module.exports.CategoryTreeController = function ($scope, $routeParams, $http) {
-    var encoded = encodeURIComponent($routeParams.category);
-
-    $scope.price = undefined;
-
-    $scope.handlePriceClick = function(){
-        if ($scope.price === undefined) {
-            $scope.price = -1;
-        } else {
-            $scope.price = 0 - $scope.price;
+module.exports.CategoryProductsController = function ($scope, $routeParams, $http) {
+    if($scope.user.user) {
+        var encoded;
+        if ($routeParams.category !== undefined) {
+            console.log($routeParams.category);
+            encoded = 'category/' + encodeURIComponent($routeParams.category);
         }
+        else {
+            encoded = 'all';
+        }
+
+        $scope.handlePriceClick = function () {
+            if ($scope.price === undefined || $scope.price === 1) {
+                $scope.price = -1;
+            } else if ($scope.price === -1) {
+                $scope.price = 1;
+            }
+            $scope.load();
+        };
+
+        $scope.price = undefined;
+
+        $scope.load = function () {
+            var queryParams = {price: $scope.price};
+            $http
+                .get('/api/v1/product/' + encoded, {params: queryParams})
+                .success(function (data) {
+                    $scope.products = data.products;
+                });
+        };
+
         $scope.load();
-    };
-
-    $scope.load = function() {
-        var queryParams = { price: $scope.price };
-        $http
-            .get('/api/v1/product/category/' + encoded, {params: queryParams})
-            .success(function(data){
-                $scope.products = data.products;
-            });
-    };
-
-    $scope.load();
+    }
 
     setTimeout(function(){
         $scope.$emit('CategoryTreeController');
@@ -121,4 +140,29 @@ module.exports.CheckoutController = function ($scope, $http, $user) {
                 });
         });
     };
+};
+
+module.exports.SearchBarController = function($scope, $http) {
+    // TODO: this function should make an HTTP request to
+    // `/api/v1/product/text/:searchText` and expose the response's
+    // `products` property as `results` to the scope.
+    $scope.update = function() {
+        $http.
+        get('/api/v1/product/text/' + $scope.searchText).
+        success(function(data) {
+            $scope.results = data.products;
+        });
+    };
+
+    setTimeout(function() {
+        $scope.$emit('SearchBarController');
+    }, 0);
+};
+
+module.exports.NavBarController = function($scope, $user) {
+    $scope.user = $user;
+
+    setTimeout(function() {
+        $scope.$emit('NavBarController');
+    }, 0);
 };

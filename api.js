@@ -10,8 +10,9 @@ module.exports = function (wagner) {
 
     api.put('/me/cart', wagner.invoke(function (User) {
         return function (req, res) {
+            var cart;
             try {
-                var cart = req.body.data.cart;
+                cart = req.body.data.cart;
             } catch (e) {
                 return res.status(status.BAD_REQUEST).json({error: 'No cart specified!'});
             }
@@ -30,9 +31,8 @@ module.exports = function (wagner) {
         if (!req.user) {
             return res.status(status.UNAUTHORIZED).json({error: 'Not logged in'});
         }
-
         res.json({user: req.user});
-        //req.user.populate({ path: 'data.cart.product', model: 'Product' }, handleOne.bind(null, 'user', res));
+        //req.user.populate({ path: 'data.cart.product', model: 'Product' }, getOneItem.bind(null, 'user', res));
     });
 
     api.post('/checkout', wagner.invoke(function (User, Stripe) {
@@ -43,7 +43,9 @@ module.exports = function (wagner) {
 
             // Populate the products in the user's cart
             req.user.populate({path: 'data.cart.product', model: 'Product'}, function (error, user) {
-
+                if(!error) {
+                    console.log(user.data);
+                }
                 // Sum up the total price in USD
                 var totalCostUSD = 0;
                 _.each(user.data.cart, function (item) {
@@ -88,6 +90,12 @@ module.exports = function (wagner) {
         };
     }));
 
+    api.get('/category/all', wagner.invoke(function (Category) {
+        return function (req, res) {
+            Category.find({}, getManyItems.bind(null, 'categories', res));
+        };
+    }));
+
     api.get('/category/parent/:id', wagner.invoke(function (Category) {
         return function (req, res) {
             Category.find({parent: req.params.id}).sort({_id: 1}).exec(getManyItems.bind(null, 'categories', res));
@@ -100,15 +108,32 @@ module.exports = function (wagner) {
         };
     }));
 
+    api.get('/product/all', wagner.invoke(function (Product) {
+        return function (req, res) {
+            var sort = {name: 1};
+            if (req.query.price === '1')
+                sort = {'internal.approximatePriceUSD': 1};
+            else if (req.query.price === '-1')
+                sort = {'internal.approximatePriceUSD': -1};
+            Product.find({}).sort(sort).exec(getManyItems.bind(null, 'products', res));
+        };
+    }));
+
     api.get('/product/category/:id', wagner.invoke(function (Product) {
         return function (req, res) {
             var sort = {name: 1};
             if (req.query.price === '1')
-                sort = {'internal.approximatePricsUSD': 1};
+                sort = {'internal.approximatePriceUSD': 1};
             else if (req.query.price === '-1')
-                sort = {'internal.approximatePricsUSD': -1};
+                sort = {'internal.approximatePriceUSD': -1};
 
             Product.find({'category.ancestors': req.params.id}).sort(sort).exec(getManyItems.bind(null, 'products', res));
+        };
+    }));
+
+    api.get('/product/text/:query', wagner.invoke(function(Product){
+        return function(req, res){
+            Product.find({$text: {$search: req.params.query}}).exec(getManyItems.bind(null, 'products', res));
         };
     }));
 
@@ -130,6 +155,7 @@ function getOneItem(property, res, error, result) {
 
 function getManyItems(property, res, err, result) {
     if(err) {
+        console.log(err);
         return res.status(status.INTERNAL_SERVER_ERROR).json({ error: err.toString() });
     }
     var json = {};

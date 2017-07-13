@@ -46,3 +46,16 @@ module.exports.checkout = function () {
         templateUrl: '/templates/checkout.html'
     };
 };
+
+module.exports.searchBar = function() {
+    return {
+        controller: 'SearchBarController',
+        templateUrl: '/templates/search_bar.html'
+    };
+};
+
+module.exports.categoryView = function() {
+    return {
+        templateUrl: '/templates/category_view.html'
+    };
+};

@@ -27,7 +27,10 @@ app.config(function ($routeProvider) {
         .when('/category/:category', {
             templateUrl: 'templates/category_view.html'
         })
-        .when('checkout', {
+        .when('/checkout', {
             template: '<checkout></checkout>'
+        })
+        .when('/', {
+            template: '<search-bar></search-bar><category-view></category-view>'
         });
 });
